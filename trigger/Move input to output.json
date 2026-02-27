@@ -1,0 +1,33 @@
+{
+	"name": "Move input to output",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "p_CopyEmployeeData",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"pl_input_container": "adftuturial",
+					"pl_input_path": "input",
+					"pl_input_filename": "empt.txt",
+					"pl_output_container": "adftuturial",
+					"pl_output_path": "output",
+					"pl_output_filename": "emp.txt"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/adftuturial/blobs/input/",
+			"blobPathEndsWith": ".txt",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/88cde802-08f5-4d1f-96a3-49df8044e416/resourceGroups/ADFWorkshop/providers/Microsoft.Storage/storageAccounts/colbyblob",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
