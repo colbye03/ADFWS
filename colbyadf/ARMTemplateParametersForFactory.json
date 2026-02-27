@@ -1,0 +1,36 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "colbyadf"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://colbyblob.dfs.core.windows.net/"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_input_container": {
+			"value": "adftuturial"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_input_path": {
+			"value": "input"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_input_filename": {
+			"value": "empt.txt"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_output_container": {
+			"value": "adftuturial"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_output_path": {
+			"value": "output"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_output_filename": {
+			"value": "emp.txt"
+		},
+		"Move input to output_properties_typeProperties_scope": {
+			"value": "/subscriptions/88cde802-08f5-4d1f-96a3-49df8044e416/resourceGroups/ADFWorkshop/providers/Microsoft.Storage/storageAccounts/colbyblob"
+		}
+	}
+}

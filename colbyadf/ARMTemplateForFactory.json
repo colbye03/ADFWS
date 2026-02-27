@@ -1,0 +1,334 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "colbyadf"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://colbyblob.dfs.core.windows.net/"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_input_container": {
+			"type": "string",
+			"defaultValue": "adftuturial"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_input_path": {
+			"type": "string",
+			"defaultValue": "input"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_input_filename": {
+			"type": "string",
+			"defaultValue": "empt.txt"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_output_container": {
+			"type": "string",
+			"defaultValue": "adftuturial"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_output_path": {
+			"type": "string",
+			"defaultValue": "output"
+		},
+		"Move input to output_properties_p_CopyEmployeeData_parameters_pl_output_filename": {
+			"type": "string",
+			"defaultValue": "emp.txt"
+		},
+		"Move input to output_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/88cde802-08f5-4d1f-96a3-49df8044e416/resourceGroups/ADFWorkshop/providers/Microsoft.Storage/storageAccounts/colbyblob"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/p_CopyEmployeeData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_csv_Input_Employee",
+								"type": "DatasetReference",
+								"parameters": {
+									"ds_container": {
+										"value": "@pipeline().parameters.pl_input_container",
+										"type": "Expression"
+									},
+									"ds_folder": {
+										"value": "@pipeline().parameters.pl_input_path",
+										"type": "Expression"
+									},
+									"ds_filename": {
+										"value": "@pipeline().parameters.pl_input_filename",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_csv_Output_Employee",
+								"type": "DatasetReference",
+								"parameters": {
+									"ds_container": {
+										"value": "@pipeline().parameters.pl_output_container",
+										"type": "Expression"
+									},
+									"ds_folder": {
+										"value": "@pipeline().parameters.pl_output_path",
+										"type": "Expression"
+									},
+									"ds_filename": {
+										"value": "@pipeline().parameters.pl_output_filename",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"pl_input_container": {
+						"type": "string",
+						"defaultValue": "adftuturial"
+					},
+					"pl_input_path": {
+						"type": "string",
+						"defaultValue": "input"
+					},
+					"pl_input_filename": {
+						"type": "string",
+						"defaultValue": "emp.txt"
+					},
+					"pl_output_container": {
+						"type": "string",
+						"defaultValue": "adftuturial"
+					},
+					"pl_output_path": {
+						"type": "string",
+						"defaultValue": "output"
+					},
+					"pl_output_filename": {
+						"type": "string",
+						"defaultValue": "emp.txt"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_csv_Input_Employee')]",
+				"[concat(variables('factoryId'), '/datasets/ds_csv_Output_Employee')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_csv_Input_Employee')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"ds_container": {
+						"type": "string"
+					},
+					"ds_folder": {
+						"type": "string"
+					},
+					"ds_filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().ds_filename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().ds_folder",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().ds_container",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_csv_Output_Employee')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"ds_container": {
+						"type": "string"
+					},
+					"ds_folder": {
+						"type": "string"
+					},
+					"ds_filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().ds_filename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().ds_folder",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().ds_container",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Move input to output')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "p_CopyEmployeeData",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"pl_input_container": "[parameters('Move input to output_properties_p_CopyEmployeeData_parameters_pl_input_container')]",
+							"pl_input_path": "[parameters('Move input to output_properties_p_CopyEmployeeData_parameters_pl_input_path')]",
+							"pl_input_filename": "[parameters('Move input to output_properties_p_CopyEmployeeData_parameters_pl_input_filename')]",
+							"pl_output_container": "[parameters('Move input to output_properties_p_CopyEmployeeData_parameters_pl_output_container')]",
+							"pl_output_path": "[parameters('Move input to output_properties_p_CopyEmployeeData_parameters_pl_output_path')]",
+							"pl_output_filename": "[parameters('Move input to output_properties_p_CopyEmployeeData_parameters_pl_output_filename')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/adftuturial/blobs/input/",
+					"blobPathEndsWith": "1.txt",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Move input to output_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/p_CopyEmployeeData')]"
+			]
+		}
+	]
+}
