@@ -22,7 +22,7 @@
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
 			"blobPathBeginsWith": "/adftuturial/blobs/input/",
-			"blobPathEndsWith": ".txt",
+			"blobPathEndsWith": "1.txt",
 			"ignoreEmptyBlobs": true,
 			"scope": "/subscriptions/88cde802-08f5-4d1f-96a3-49df8044e416/resourceGroups/ADFWorkshop/providers/Microsoft.Storage/storageAccounts/colbyblob",
 			"events": [
